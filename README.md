@@ -49,3 +49,11 @@ Failed or interrupted jobs are **not retried automatically**. This avoids resend
 No Supabase credentials or Postmark account were supplied to the build. Production authentication, storage, cross-tenant RLS, real OCR accuracy, function execution, and email delivery must be verified on the configured project. OCR runs in-browser and downloads its recognition assets; review every extracted field before saving. Multi-person imported rows must be separated manually before mailing. Invitations, account recovery UI, billing, team administration UI, and automatic reply classification are not included in this initial rebuild. Trusted administrators manage team membership through Supabase until an audited invitation flow is added.
 
 Official references: [Netlify scheduled functions](https://docs.netlify.com/build/functions/scheduled-functions/) and [Supabase RLS](https://supabase.com/docs/guides/database/postgres/row-level-security).
+
+## Mobile capture and OCR
+
+The mobile bottom navigation keeps Scan available from every page. More opens all management screens, including Events and Workflows. Capture uses a full-screen Scan → Review → Follow-up flow with a sticky save action, camera/photo-library choices, large category controls, event selection and inline event creation. Saving the contact does not start its workflow; the user reviews the sequence and explicitly starts it afterward. An enrollment failure leaves the saved contact available for retry.
+
+Card recognition runs locally in English. Images are resized, a contrast-enhanced reading is compared with an original-color sparse-layout reading, and small-angle deskew is enabled. Rotate by 90 degrees, trim surrounding background, reread, retake, cancel reading, or enter details manually. Name parsing filters common company/job headings and considers email-name matches. OCR remains fallible: confirm every field before saving, especially email addresses. No card photos are sent to an AI provider.
+
+Local browser checks use synthetic data and a synthetic card. They do not establish accuracy on the user's actual card collection or verify a real phone camera. Live workflow execution still needs the server variables and migrations documented above.

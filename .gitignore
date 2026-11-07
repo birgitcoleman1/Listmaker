@@ -6,3 +6,5 @@ dist/
 .netlify/
 .DS_Store
 private-imports/
+
+.qa/
