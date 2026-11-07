@@ -57,3 +57,7 @@ The mobile bottom navigation keeps Scan available from every page. More opens al
 Card recognition runs locally in English. Images are resized, a contrast-enhanced reading is compared with an original-color sparse-layout reading, and small-angle deskew is enabled. Rotate by 90 degrees, trim surrounding background, reread, retake, cancel reading, or enter details manually. Name parsing filters common company/job headings and considers email-name matches. OCR remains fallible: confirm every field before saving, especially email addresses. No card photos are sent to an AI provider.
 
 Local browser checks use synthetic data and a synthetic card. They do not establish accuracy on the user's actual card collection or verify a real phone camera. Live workflow execution still needs the server variables and migrations documented above.
+
+### Workspace import and private mailbox update
+
+See [Import and email setup](docs/IMPORT-EMAIL-SETUP.md) for the additive migration, Netlify secret, Migadu verification, exact provider settings, permission model, retry/status semantics and live acceptance steps. Apply the migration before deploying this update. Workflow transport remains Postmark; Migadu supplies each user's IMAP mailbox and desktop SMTP connection.

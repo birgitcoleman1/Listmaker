@@ -1,6 +1,6 @@
 import React,{useEffect,useRef} from 'react';
 
-export default function ContactDialog({children,onClose}){
+export default function ContactDialog({children,onClose,label="Contact information"}){
  const ref=useRef(null);
  useEffect(()=>{
   const dialog=ref.current;
@@ -10,5 +10,5 @@ export default function ContactDialog({children,onClose}){
   dialog.showModal();
   return()=>{dialog.close();document.body.style.overflow=previous;if(opener?.isConnected)opener.focus()};
  },[]);
- return <dialog ref={ref} className="contact-dialog" aria-label="Contact information" onCancel={e=>{e.preventDefault();onClose()}} onClick={e=>{if(e.target===e.currentTarget){const r=e.currentTarget.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)onClose()}}}>{children}</dialog>;
+ return <dialog ref={ref} className="contact-dialog" aria-label={label} onCancel={e=>{e.preventDefault();onClose()}} onClick={e=>{if(e.target===e.currentTarget){const r=e.currentTarget.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)onClose()}}}>{children}</dialog>;
 }
