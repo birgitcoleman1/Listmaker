@@ -7,8 +7,8 @@ returns jsonb language plpgsql security definer set search_path='' as $$
 declare r jsonb; d jsonb; cid uuid; coid uuid; existing uuid; result jsonb:='[]'; outcome text; rownum integer; prior record; err text;
 begin
  if not public.is_org_writer(p_org) then raise exception 'Write access required';end if;
- if p_policy not in ('skip','update','create') then raise exception 'Choose duplicate handling';end if;
- if jsonb_typeof(p_rows)<>'array' or jsonb_array_length(p_rows)>100 then raise exception 'Maximum 100 rows per request';end if;
+ if p_policy is null or p_policy not in ('skip','update','create') then raise exception 'Choose duplicate handling';end if;
+ if jsonb_typeof(p_rows) is distinct from 'array' or jsonb_array_length(p_rows)>100 then raise exception 'Maximum 100 rows per request';end if;
  perform pg_advisory_xact_lock(hashtextextended(p_org::text,0));
  for r in select value from jsonb_array_elements(p_rows) loop
   cid:=null;coid:=null;existing:=null;err:=null;outcome:='success';rownum:=(r->>'rowNumber')::integer;d:=r->'data';

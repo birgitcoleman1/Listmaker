@@ -8,6 +8,7 @@ test('additive import and mailbox migrations preserve history, validate imports,
  assert.equal((await db.query('select source_file from import_records order by imported_at')).rows[0].source_file,'legacy.xlsx');
  async function user(id){await db.exec(`reset role;set role authenticated;set request.jwt.claim.sub='${id}';`)}
  await user(owner);const batch='77777777-7777-4777-8777-777777777777';const importRows=async(policy,rows,b=batch)=>(await db.query('select import_contacts($1,$2,$3,$4,$5,$6) as result',[org,b,'test.csv','Contacts',policy,JSON.stringify(rows)])).rows[0].result;
+ await assert.rejects(importRows(null,[]),/Choose duplicate handling/);
  const input=[{rowNumber:2,data:{first_name:'Maya',email:'MAYA@example.com',company:'Studio'}},{rowNumber:3,data:{first_name:'',email:'bad'}},{rowNumber:4,data:{first_name:'No email'}}];let results=await importRows('skip',input);assert.deepEqual(results.map(r=>r.status),['success','failed','success']);assert.equal(results[1].error,'First name is required');assert.deepEqual(await importRows('skip',input),results);
  results=await importRows('skip',[{rowNumber:5,data:{first_name:'Duplicate',email:'maya@example.com'}}]);assert.equal(results[0].status,'skipped');
  results=await importRows('create',[{rowNumber:6,data:{first_name:'Duplicate',email:'maya@example.com'}}]);assert.equal(results[0].status,'failed');
