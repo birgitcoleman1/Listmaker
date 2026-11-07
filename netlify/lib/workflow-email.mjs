@@ -13,6 +13,6 @@ export async function sendWorkflowEmail(db,{job,enrollment,workflow,contact,step
   const claimed=await data(db.rpc('claim_email_send',{p_job:job.id}));if(!claimed)throw Error('A previous send attempt exists. Check Postmark before any manual retry; automatic resend is blocked.');
   let res;try{res=await send('https://api.postmarkapp.com/email',{method:'POST',headers:{'X-Postmark-Server-Token':process.env.POSTMARK_SERVER_TOKEN,'Content-Type':'application/json'},body:JSON.stringify({From:identity.from_email,To:contact.email,Subject:subject,TextBody:body,MessageStream:'outbound',Metadata:{job_id:job.id}}),signal:AbortSignal.timeout(15000)})}catch{throw Error('Sending outcome unknown after network failure. Check Postmark using job '+job.id+'. Automatic resend is blocked.')}
   const result=await res.json();if(!res.ok||result.ErrorCode!==0)throw Error('Postmark rejected email: '+String(result.Message||res.status).slice(0,500));
-  await data(db.from('email_messages').update({status:'sent',provider_message_id:result.MessageID,sent_at:result.SubmittedAt||new Date().toISOString(),error_details:null}).eq('id',message.id));
+  await data(db.from('email_messages').update({status:'sent',provider_message_id:result.MessageID,sent_at:result.SubmittedAt||new Date().toISOString(),message_at:result.SubmittedAt||new Date().toISOString(),error_details:null}).eq('id',message.id));
  }catch(e){await data(db.from('email_messages').update({status:'failed',error_details:e.message}).eq('id',message.id));throw e}
 }

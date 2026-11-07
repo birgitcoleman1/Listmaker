@@ -112,7 +112,7 @@ alter table public.mail_locations add foreign key(organization_id,message_id) re
 alter table public.mail_accounts add column lease_token uuid;
 alter table public.mail_accounts add column lease_until timestamptz;
 create function public.claim_mailbox(p_account uuid,p_token uuid) returns boolean language sql security definer set search_path='' as $$
- with claimed as(update public.mail_accounts set lease_token=p_token,lease_until=now()+interval '2 minutes' where id=p_account and (lease_until is null or lease_until<now()) returning id) select exists(select 1 from claimed)
+ with claimed as(update public.mail_accounts set lease_token=p_token,lease_until=now()+interval '2 minutes' where id=p_account and verified_at is not null and (lease_until is null or lease_until<now()) returning id) select exists(select 1 from claimed)
 $$;
 create function public.save_mail_account(p_org uuid,p_user uuid,p_email text,p_ciphertext text) returns public.mail_accounts language plpgsql security definer set search_path='' as $$
 declare a public.mail_accounts;
