@@ -1,0 +1,2 @@
+export async function startContactWorkflow(server,contactId){if(!contactId)throw Error('Save the contact first');return server('enroll',{contact_id:contactId})}
+export async function activeEnrollment(db,org,contactId){const {data,error}=await db.from('workflow_enrollments').select('id,status,created_at').eq('organization_id',org).eq('contact_id',contactId).eq('status','active');if(error)throw error;return data.length>0}

@@ -1,0 +1,7 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import * as XLSX from 'xlsx';
+import {readSpreadsheet,suggestMapping,mapImportRows,validateImportRow} from '../src/import-model.js';
+for(const kind of ['csv','xlsx','biff8'])test(`reads ${kind}, headers, corrected mapping, required fields and invalid emails`,async()=>{
+ const matrix=[['FULL Name','E-mail address','Employer','Custom title'],['Maya Chen','maya@example.com','Studio','Director'],['','bad','Other',''],['Alex Rivera','alex@example.com','','']];const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(matrix),'Contacts');const file=kind==='csv'?'test.csv':kind==='biff8'?'test.xls':'test.xlsx';const buffer=XLSX.write(wb,{bookType:kind,type:'buffer'});const sheets=await readSpreadsheet(buffer,file);assert.equal(sheets[0].rows.length,3);const mapping=suggestMapping(sheets[0].headers);assert.deepEqual(mapping,['first_name','email','company','']);mapping[3]='job_title';const rows=mapImportRows(sheets[0],mapping);assert.equal(rows[0].data.first_name,'Maya');assert.equal(rows[0].data.last_name,'Chen');assert.equal(rows[0].data.job_title,'Director');assert.equal(rows[0].rowNumber,2);assert.deepEqual(rows[1].errors,['First name is required','Invalid email address']);assert.equal(rows[2].errors.length,0);
+});
+test('invalid fields and unsupported file types are rejected',async()=>{assert.ok(validateImportRow({first_name:'X',password:'never'}).length);await assert.rejects(readSpreadsheet(new Uint8Array(),'x.pdf'));});
