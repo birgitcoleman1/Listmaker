@@ -1,0 +1,4 @@
+import {admin,response} from '../lib/shared.mjs';
+// This single user-approved portrait is intentionally displayed on the public website.
+// No arbitrary bucket/path is accepted, and the existing bucket stays private.
+export async function handler(event){if(event.httpMethod!=='GET')return response(405,{error:'Method not allowed'});try{const db=admin();const pages=await db.from('website_published_pages').select('content').in('slug',['home','about']);if(pages.error&&!['42P01','PGRST205'].includes(pages.error.code))return response(503,{error:'Image unavailable'});if(!pages.error&&!pages.data.some(p=>p.content.use_initial_image))return response(404,{error:'Initial image is no longer published'});const {data,error}=await db.storage.from('Website-media').createSignedUrl('Birgit.jpg',3600);if(error)throw error;return response(200,{url:data.signedUrl})}catch{return response(503,{error:'Image unavailable'})}}

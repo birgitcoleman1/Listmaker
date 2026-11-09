@@ -61,3 +61,7 @@ Local browser checks use synthetic data and a synthetic card. They do not establ
 ### Workspace import and private mailbox update
 
 See [Import and email setup](docs/IMPORT-EMAIL-SETUP.md) for the additive migration, Netlify secret, Migadu verification, exact provider settings, permission model, retry/status semantics and live acceptance steps. Apply the migration before deploying this update. Workflow transport remains Postmark; Migadu supplies each user's IMAP mailbox and desktop SMTP connection.
+
+### Public website and separate Listmaker route
+
+The public Birgit Coleman website now lives at `/`, `/about`, `/references`, and `/contact`. Listmaker is mounted at `/lm` with direct section/contact URLs. Website administration is separate at `/admin`, reached through the footer's `/admin/login` link. See [Public website setup](docs/PUBLIC-WEBSITE-SETUP.md) for the additive website migration, exact masteradmin assignment, authentication URL configuration, CMS publishing/media behavior, contact-form protections and acceptance checks.

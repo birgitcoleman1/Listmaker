@@ -6,6 +6,15 @@ functions = "netlify/functions"
 NODE_VERSION = "22"
 [functions."workflow-runner"]
 schedule = "*/5 * * * *"
+# Separate public, Listmaker and CMS route trees share the SPA entry.
+[[redirects]]
+from = "/lm/*"
+to = "/index.html"
+status = 200
+[[redirects]]
+from = "/admin/*"
+to = "/index.html"
+status = 200
 [[redirects]]
 from = "/*"
 to = "/index.html"

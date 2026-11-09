@@ -1,0 +1,3 @@
+import {useEffect,useState} from 'react';
+import {pageDefaults} from './content.js';
+export default function usePublicContent(db,slug){const [content,C]=useState(pageDefaults[slug]),[references,R]=useState([]);useEffect(()=>{let active=true;C(pageDefaults[slug]);if(db)(async()=>{const result=await db.from('website_published_pages').select('content').eq('slug',slug).maybeSingle();if(active&&result.data)C({...pageDefaults[slug],...result.data.content});if(slug==='references'){const list=await db.from('website_references').select('*').eq('published',true).order('position').order('created_at');if(active&&!list.error)R(list.data)}})();return()=>{active=false}},[db,slug]);return {content,references}}
